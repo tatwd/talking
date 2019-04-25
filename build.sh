@@ -1,0 +1,1 @@
+dotnet publish "api/Talking.Api.csproj" -c Release -o output

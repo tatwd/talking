@@ -17,4 +17,10 @@
     <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Dockerfile.release">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
