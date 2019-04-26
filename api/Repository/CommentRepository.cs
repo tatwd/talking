@@ -21,9 +21,14 @@ namespace Talking.Api.Repository
             return data;
         }
 
+        public IList<Comment> GetComments(string postUrl)
+        {
+            var data = _context.Comments.Find(_ => _.PostUrl == postUrl).ToList();
+            return data;
+        }
+
         public void InsertComment(Comment comment)
         {
-            _context.Comments.
             _context.Comments.InsertOne(comment);
         }
     }

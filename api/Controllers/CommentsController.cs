@@ -26,18 +26,26 @@ namespace Talking.Api.Controllers
             try
             {
                 var data = _commentRepository.GetComments();
-                return Ok(data);
+                return Ok(new { code = 0, data });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { code = 5, message = ex.Message });
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet("{postUrl}")]
+        public IActionResult Get(string postUrl)
         {
-            return $"{id}";
+            try
+            {
+                var data = _commentRepository.GetComments(postUrl);
+                return Ok(new { code = 0, data });
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { code = 5, message = ex.Message });
+            }
         }
 
         [HttpPost]
