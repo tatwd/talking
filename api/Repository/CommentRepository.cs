@@ -27,6 +27,16 @@ namespace Talking.Api.Repository
             return data;
         }
 
+        public IList<Comment> GetComments(string postUrl, int page, int limit)
+        {
+            var data = _context.Comments
+                .Find(_ => _.PostUrl == postUrl)
+                .Skip((page - 1) * limit)
+                .Limit(limit)
+                .ToList();
+            return data;
+        }
+
         public void InsertComment(Comment comment)
         {
             _context.Comments.InsertOne(comment);

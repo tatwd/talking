@@ -21,25 +21,15 @@ namespace Talking.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string post_url, [FromQuery] int? page, [FromQuery] int? limit)
         {
             try
             {
-                var data = _commentRepository.GetComments();
-                return Ok(new { code = 0, data });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { code = 5, message = ex.Message });
-            }
-        }
+                // var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
-        [HttpGet("{postUrl}")]
-        public IActionResult Get(string postUrl)
-        {
-            try
-            {
-                var data = _commentRepository.GetComments(postUrl);
+                var data = string.IsNullOrEmpty(post_url)
+                    ? _commentRepository.GetComments() // TODO: 不能查询所有
+                    : _commentRepository.GetComments(post_url);
                 return Ok(new { code = 0, data });
             }
             catch (System.Exception ex)
