@@ -31,8 +31,8 @@ namespace Talking.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<MongoSettings>(options => {
-                options.ConnectionString = "mongodb://localhost:27017";
-                options.DatabaseName = "talking_sys";
+                options.ConnectionString = Configuration["MongoSettings:ConnectionUrl"];
+                options.DatabaseName = Configuration["MongoSettings:DatabaseName"];
             });
 
             services.AddTransient<ICommentRepository, CommentRepository>();

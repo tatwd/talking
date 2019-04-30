@@ -17,13 +17,19 @@ namespace Talking.Api.Repository
 
         public IList<Comment> GetComments()
         {
-            var data = _context.Comments.Find(_ => true).ToList();
+            var data = _context.Comments
+                .Find(_ => true)
+                .SortByDescending(_ => _.UtcCreated)
+                .ToList();
             return data;
         }
 
         public IList<Comment> GetComments(string postUrl)
         {
-            var data = _context.Comments.Find(_ => _.PostUrl == postUrl).ToList();
+            var data = _context.Comments
+                .Find(_ => _.PostUrl == postUrl)
+                .SortByDescending(_ => _.UtcCreated)
+                .ToList();
             return data;
         }
 
@@ -33,6 +39,7 @@ namespace Talking.Api.Repository
                 .Find(_ => _.PostUrl == postUrl)
                 .Skip((page - 1) * limit)
                 .Limit(limit)
+                .SortByDescending(_ => _.UtcCreated)
                 .ToList();
             return data;
         }

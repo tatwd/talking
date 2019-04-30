@@ -21,15 +21,21 @@ namespace Talking.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string post_url, [FromQuery] int? page, [FromQuery] int? limit)
+        public IActionResult Get([FromQuery] string post_url, [FromQuery] int? page, [FromQuery] int limit = 10)
         {
             try
             {
-                // var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+                IList<Comment> data;
 
-                var data = string.IsNullOrEmpty(post_url)
-                    ? _commentRepository.GetComments() // TODO: 不能查询所有
-                    : _commentRepository.GetComments(post_url);
+                if (string.IsNullOrEmpty(post_url))
+                {
+                    data = _commentRepository.GetComments(); // TODO: 不能查询所有
+                    return Ok(data);
+                }
+
+                data = !page.HasValue ?
+                    _commentRepository.GetComments(post_url) :
+                    _commentRepository.GetComments(post_url, page.Value, limit);
                 return Ok(new { code = 0, data });
             }
             catch (System.Exception ex)
@@ -43,6 +49,11 @@ namespace Talking.Api.Controllers
         {
             try
             {
+                // var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+                var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+                if (string.IsNullOrEmpty(ip))
+                    ip = HttpContext.Connection.RemoteIpAddress.ToString();
+                comment.Owner.IPv4 = ip;
                 _commentRepository.InsertComment(comment);
                 return Ok(comment.ID);
             }
@@ -50,16 +61,6 @@ namespace Talking.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

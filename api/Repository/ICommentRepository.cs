@@ -8,6 +8,7 @@ namespace Talking.Api.Repository
         void InsertComment(Comment comment);
         IList<Comment> GetComments();
         IList<Comment> GetComments(string postUrl);
+        IList<Comment> GetComments(string postUrl,  int page, int limit);
     }
 }
 
