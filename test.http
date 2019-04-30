@@ -1,0 +1,24 @@
+### Must install `REST Client` plugin in vscode
+
+### Get comments
+GET http://localhost:5000/api/comments HTTP/1.1
+
+### Get comments by post_url
+GET http://localhost:5000/api/comments?post_url=http://foo.com/abc HTTP/1.1
+
+
+### Get comments by post_url, page, limit
+GET http://localhost:5000/api/comments?post_url=http://foo.com/abc&page=1&limit=10 HTTP/1.1
+
+### Create a comment
+POST http://localhost:5000/api/comments HTTP/1.1
+content-type: application/json
+
+{
+    "owner": {
+        "name": "Jaron",
+        "email": "jaron@test.com"
+    },
+    "postUrl": "http://foo.com/test",
+    "htmlText": "测试一下"
+}
