@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using Talking.Api.Data;
+using Talking.Api.Models;
 using Talking.Api.Repository;
 
 namespace Talking.Api.Controllers
@@ -21,26 +22,36 @@ namespace Talking.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string post_url, [FromQuery] int? page, [FromQuery] int limit = 10)
+        public IActionResult Get([FromQuery] string post_url,
+                                 [FromQuery] int? page,
+                                 [FromQuery] int limit = 10)
         {
             try
             {
-                IList<Comment> data;
+                IList<Comment> list;
+                long total = 0;
 
                 if (string.IsNullOrEmpty(post_url))
                 {
-                    data = _commentRepository.GetComments(); // TODO: 不能查询所有
-                    return Ok(data);
+                    list = _commentRepository.GetComments(); // TODO: 不能查询所有
+                    total = list.Count;
+                    return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
                 }
 
-                data = !page.HasValue ?
+                total = _commentRepository.GetCount(post_url);
+
+                list = !page.HasValue ?
                     _commentRepository.GetComments(post_url) :
                     _commentRepository.GetComments(post_url, page.Value, limit);
-                return Ok(new { code = 0, data });
+
+                return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
             }
             catch (System.Exception ex)
             {
-                return BadRequest(new { code = 5, message = ex.Message });
+                return BadRequest(HttpResponseFactory.CreateKo(
+                    code: 5,
+                    message: "exception",
+                    detail: ex.Message));
             }
         }
 
@@ -49,17 +60,19 @@ namespace Talking.Api.Controllers
         {
             try
             {
-                // var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
                 if (string.IsNullOrEmpty(ip))
                     ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 comment.Owner.IPv4 = ip;
                 _commentRepository.InsertComment(comment);
-                return Ok(comment.ID);
+                return Ok(HttpResponseFactory.CreateOk(message: "created", detail: comment));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(HttpResponseFactory.CreateKo(
+                    code: 5,
+                    message: "exception",
+                    detail: ex.Message));
             }
         }
     }
