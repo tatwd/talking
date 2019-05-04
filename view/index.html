@@ -15,7 +15,7 @@
   new Talking(() => {
     return {
       el: document.querySelector('#app'),
-      apiUri: 'http://119.23.236.169/tatwd/api/comments',
+      apiUri: 'http://localhost:5000/api/comments',
       render: (item) => `
         <div class="item">
           <span>${item.owner.name}</span>

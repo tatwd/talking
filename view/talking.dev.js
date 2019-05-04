@@ -6,7 +6,7 @@
     _xhr.onreadystatechange = function (evt) {
       if (_xhr.readyState === 4 && _xhr.status === 200) {
         var res = JSON.parse(_xhr.responseText);
-        if (options.success) options.success(res.data);
+        if (options.success) options.success(res);
       }
     }
     _xhr.open(options.method, options.url)
@@ -22,11 +22,11 @@
     _http({
       method: 'GET',
       url: _data.apiUri + '?post_url=' + location.href,
-      success: function (data) {
+      success: function (res) {
         if (_data.render) {
-          var html = ''
-          data.forEach(i => {
-            html += _data.render(i)
+          var html = '';
+          res.detail.list.forEach(i => {
+            html += _data.render(i);
           });
           _data.el.querySelector('#comments').innerHTML = html;
         }
@@ -42,9 +42,9 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      success: function (data) {
+      success: function (res) {
         _clearInput();
-        console.log(data)
+        console.log(res)
         _getComments(); // TODO: 不应重新渲染
       }
     });
