@@ -15,6 +15,12 @@ namespace Talking.Api.Repository
             _context = new TalkingDbContext(settings);
         }
 
+        public long GetCount(string postUrl)
+        {
+            var filter = Builders<Comment>.Filter.Eq(_ => _.PostUrl, postUrl);
+            return _context.Comments.CountDocuments(filter);
+        }
+
         public IList<Comment> GetComments()
         {
             var data = _context.Comments
