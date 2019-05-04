@@ -30,6 +30,15 @@ namespace Talking.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddCors(options => {
+                options.AddPolicy(options.DefaultPolicyName,
+                    builder => {
+                        builder.AllowAnyOrigin();
+                        builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                    });
+            });
+
             services.Configure<MongoSettings>(options => {
                 options.ConnectionString = Configuration["MongoSettings:ConnectionUrl"];
                 options.DatabaseName = Configuration["MongoSettings:DatabaseName"];
@@ -43,6 +52,7 @@ namespace Talking.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors();
             }
             else
             {
