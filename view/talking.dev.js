@@ -44,8 +44,8 @@
       },
       success: function (res) {
         _clearInput();
-        console.log(res)
-        _getComments(); // TODO: 不应重新渲染
+        var dom = _data.el.querySelector('#comments');
+        dom.innerHTML = _data.render(res.detail) + dom.innerHTML;
       }
     });
   }
