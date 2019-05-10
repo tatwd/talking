@@ -1,28 +1,28 @@
-!(function () {
+!(function() {
   var _data = {};
   var _xhr = new XMLHttpRequest();
 
   function _http(options) {
-    _xhr.onreadystatechange = function (evt) {
+    _xhr.onreadystatechange = function(evt) {
       if (_xhr.readyState === 4 && _xhr.status === 200) {
         var res = JSON.parse(_xhr.responseText);
         if (options.success) options.success(res);
       }
-    }
-    _xhr.open(options.method, options.url)
+    };
+    _xhr.open(options.method, options.url);
     for (var k in options.headers) {
       if (options.headers.hasOwnProperty(k)) {
         _xhr.setRequestHeader(k, options.headers[k]);
       }
     }
-    _xhr.send(options.data || null)
+    _xhr.send(options.data || null);
   }
 
   function _getComments() {
     _http({
       method: 'GET',
       url: _data.apiUri + '?post_url=' + location.href,
-      success: function (res) {
+      success: function(res) {
         if (_data.render) {
           var html = '';
           res.detail.list.forEach(i => {
@@ -42,7 +42,7 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      success: function (res) {
+      success: function(res) {
         _clearInput();
         var dom = _data.el.querySelector('#comments');
         dom.innerHTML = _data.render(res.detail) + dom.innerHTML;
@@ -64,11 +64,11 @@
         <button id="submitCommentBtn">发表</button>
       </form>
       <div id="comments"></div>
-    `
+    `;
     var inputOwnerName = _data.el.querySelector('input[name="owner.name"]');
     var inputOwnerEmail = _data.el.querySelector('input[name="owner.email"]');
     var inputHtmlText = _data.el.querySelector('textarea[name="htmlText"]');
-    _data.el.addEventListener('click', function (evt) {
+    _data.el.addEventListener('click', function(evt) {
       evt.preventDefault();
       if (evt.target.id === 'submitCommentBtn') {
         var ownerName = inputOwnerName.value.trim();
@@ -82,7 +82,7 @@
             },
             postUrl: location.href,
             htmlText
-          })
+          });
         } else {
           alert('请输入内容！');
         }
