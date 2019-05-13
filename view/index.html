@@ -12,18 +12,67 @@
 <div id="app"></div>
 <script src="talking.dev.js"></script>
 <script>
+  function renderItem(item) {
+    return `
+      <div class="item" data-id=${item.id}>
+        <span>${item.owner.name}</span>
+        <a href="mailto:${item.owner.email}">${item.owner.email}</a>
+        <span>${new Date(item.utcCreated).toLocaleString()}</span>
+        <p>${item.htmlText}</p>
+      </div>
+    `;
+  }
+
+  var inputOwnerName, inputOwnerEmail, inputHtmlText;
+
   new Talking(() => {
     return {
       el: document.querySelector('#app'),
-      apiUri: 'http://localhost:5000/api/comments',
-      render: (item) => `
-        <div class="item">
-          <span>${item.owner.name}</span>
-          <a href="mailto:${item.owner.email}">${item.owner.email}</a>
-          <span>${new Date(item.utcCreated).toLocaleString()}</span>
-          <p>${item.htmlText}</p>
-        </div>
-      `
+      api: 'http://blog.sondge.club/tatwd/api/comments',
+
+      // the template is mouted to el
+      inited: (el) => {
+        inputOwnerName = el.querySelector('input[name="owner.name"]');
+        inputOwnerEmail = el.querySelector('input[name="owner.email"]');
+        inputHtmlText = el.querySelector('textarea[name="htmlText"]');
+
+        el.querySelector('#comments').innerHTML += 'loading ...';
+      },
+
+      // render comments to view
+      render: (res) => {
+        var html = '';
+        res.detail.list.forEach(i => {
+          html += renderItem(i);
+        });
+        document.querySelector('#comments').innerHTML = html;
+      },
+
+      // submit comment to create
+      submit: () => {
+        var name = inputOwnerName.value.trim()
+          , email = inputOwnerEmail.value.trim()
+          , htmlText = inputHtmlText.value.trim()
+          , postUrl = location.href
+        if (!name) return alert("请输入昵称");
+        if (!email) return alert("请输入邮箱");
+        if (!htmlText) return alert("请输入评论内容");
+        return {
+          owner: {
+            name,
+            email
+          },
+          postUrl,
+          htmlText
+        };
+      },
+
+      // created a comment item
+      created: (res) => {
+        document.querySelector('form').reset();
+        var dom = document.querySelector('#comments');
+        dom.innerHTML = renderItem(res.detail) + dom.innerHTML;
+      }
     }
   });
 </script>

@@ -2,6 +2,17 @@
   var _data = {};
   var _xhr = new XMLHttpRequest();
 
+  // default templates
+  var _template = `
+<form>
+  用户名: <br><input name="owner.name" required/><br>
+  邮箱: <br><input name="owner.email" required/><br>
+  评论内容：<br><textarea name="htmlText" required></textarea><br>
+  <button id="submitCommentBtn">发表</button>
+</form>
+<div id="comments"></div>
+`;
+
   function _http(options) {
     _xhr.onreadystatechange = function(evt) {
       if (_xhr.readyState === 4 && _xhr.status === 200) {
@@ -21,15 +32,9 @@
   function _getComments() {
     _http({
       method: 'GET',
-      url: _data.apiUri + '?post_url=' + location.href,
+      url: _data.api + '?post_url=' + location.href,
       success: function(res) {
-        if (_data.render) {
-          var html = '';
-          res.detail.list.forEach(i => {
-            html += _data.render(i);
-          });
-          _data.el.querySelector('#comments').innerHTML = html;
-        }
+        if (_data.render) _data.render(res);
       }
     });
   }
@@ -37,59 +42,33 @@
   function _createComment(data) {
     _http({
       method: 'POST',
-      url: _data.apiUri,
+      url: _data.api,
       data: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json'
       },
       success: function(res) {
-        _clearInput();
-        var dom = _data.el.querySelector('#comments');
-        dom.innerHTML = _data.render(res.detail) + dom.innerHTML;
+        _data.created(res);
       }
     });
   }
 
-  function _clearInput() {
-    _data.el.querySelector('form').reset();
+  function _init() {
+    _data.el.innerHTML = `${_data.template || _template}`;
+    _data.el.addEventListener('click', function(evt) {
+      evt.preventDefault();
+      if (evt.target.id === 'submitCommentBtn') {
+        var newItem = _data.submit();
+        if (newItem) _createComment(newItem);
+      }
+    });
+    _data.inited(_data.el);
+    _getComments();
   }
 
   function Talking(cb) {
     _data = cb();
-    _data.el.innerHTML += `
-      <form>
-        用户名: <br><input name="owner.name" required/><br>
-        邮箱: <br><input name="owner.email" required/><br>
-        评论内容：<br><textarea name="htmlText" required></textarea><br>
-        <button id="submitCommentBtn">发表</button>
-      </form>
-      <div id="comments"></div>
-    `;
-    var inputOwnerName = _data.el.querySelector('input[name="owner.name"]');
-    var inputOwnerEmail = _data.el.querySelector('input[name="owner.email"]');
-    var inputHtmlText = _data.el.querySelector('textarea[name="htmlText"]');
-    _data.el.addEventListener('click', function(evt) {
-      evt.preventDefault();
-      if (evt.target.id === 'submitCommentBtn') {
-        var ownerName = inputOwnerName.value.trim();
-        var ownerEmail = inputOwnerEmail.value.trim();
-        var htmlText = inputHtmlText.value.trim();
-        if (ownerName && ownerEmail && htmlText) {
-          _createComment({
-            owner: {
-              name: ownerName,
-              email: ownerEmail
-            },
-            postUrl: location.href,
-            htmlText
-          });
-        } else {
-          alert('请输入内容！');
-        }
-      }
-    });
-    console.log(_data);
-    _getComments();
+    _init();
   }
   window.Talking = window.Talking || Talking;
 })();
