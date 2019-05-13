@@ -1,5 +1,5 @@
 <style>
-  #app {
+  .container {
     max-width: 666px;
     margin: auto;
   }
@@ -9,7 +9,10 @@
     border-bottom: 1px solid #eee;
   }
 </style>
-<div id="app"></div>
+<div class="container">
+  <h1>Post Title: Hello World</h1>
+  <div id="app"></div>
+</div>
 <script src="talking.dev.js"></script>
 <script>
   function renderItem(item) {
@@ -23,17 +26,20 @@
     `;
   }
 
-  var inputOwnerName, inputOwnerEmail, inputHtmlText;
-
+  var inputOwnerName, inputOwnerEmail, inputOwnerUrl, inputHtmlText;
+  var h1 = document.querySelector('h1')
+  var postTitle = h1 ? h1.innerHTML : 'undefined';
+  console.log(postTitle)
   new Talking(() => {
     return {
       el: document.querySelector('#app'),
-      api: 'http://blog.sondge.club/tatwd/api/comments',
+      api: 'http://localhost:5000/api/comments',
 
       // the template is mouted to el
       inited: (el) => {
         inputOwnerName = el.querySelector('input[name="owner.name"]');
         inputOwnerEmail = el.querySelector('input[name="owner.email"]');
+        inputOwnerUrl = el.querySelector('input[name="owner.url"]');
         inputHtmlText = el.querySelector('textarea[name="htmlText"]');
 
         el.querySelector('#comments').innerHTML += 'loading ...';
@@ -45,7 +51,7 @@
         res.detail.list.forEach(i => {
           html += renderItem(i);
         });
-        document.querySelector('#comments').innerHTML = html;
+        document.querySelector('#comments').innerHTML = html || 'none';
       },
 
       // submit comment to create
@@ -53,6 +59,7 @@
         var name = inputOwnerName.value.trim()
           , email = inputOwnerEmail.value.trim()
           , htmlText = inputHtmlText.value.trim()
+          , url = inputOwnerUrl.value.trim()
           , postUrl = location.href
         if (!name) return alert("请输入昵称");
         if (!email) return alert("请输入邮箱");
@@ -60,8 +67,10 @@
         return {
           owner: {
             name,
-            email
+            email,
+            url
           },
+          postTitle,
           postUrl,
           htmlText
         };

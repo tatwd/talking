@@ -7,6 +7,7 @@
 <form>
   用户名: <br><input name="owner.name" required/><br>
   邮箱: <br><input name="owner.email" required/><br>
+  网址: <br><input name="owner.url" required/><br>
   评论内容：<br><textarea name="htmlText" required></textarea><br>
   <button id="submitCommentBtn">发表</button>
 </form>
@@ -70,5 +71,6 @@
     _data = cb();
     _init();
   }
+
   window.Talking = window.Talking || Talking;
 })();
