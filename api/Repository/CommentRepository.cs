@@ -21,10 +21,11 @@ namespace Talking.Api.Repository
             return _context.Comments.CountDocuments(filter);
         }
 
-        public IList<Comment> GetComments()
+        public IList<Comment> GetComments(int limit)
         {
             var data = _context.Comments
                 .Find(_ => true)
+                .Limit(limit)
                 .SortByDescending(_ => _.UtcCreated)
                 .ToList();
             return data;

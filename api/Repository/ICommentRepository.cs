@@ -7,7 +7,7 @@ namespace Talking.Api.Repository
     {
         void InsertComment(Comment comment);
         long GetCount(string postUrl);
-        IList<Comment> GetComments();
+        IList<Comment> GetComments(int limit = 0); // 0 is to get all
         IList<Comment> GetComments(string postUrl);
         IList<Comment> GetComments(string postUrl,  int page, int limit);
     }
