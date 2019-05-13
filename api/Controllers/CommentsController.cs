@@ -28,22 +28,26 @@ namespace Talking.Api.Controllers
         {
             try
             {
-                IList<Comment> list;
+                IList<CommentDto> list;
                 long total = 0;
 
                 if (string.IsNullOrEmpty(post_url))
                 {
-                    list = _commentRepository.GetComments(); // TODO: 不能查询所有
+                    list = _commentRepository
+                        .GetComments(limit: 10)
+                        .Select(i => new CommentDto(i))
+                        .ToList();
                     total = list.Count;
                     return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
                 }
 
                 total = _commentRepository.GetCount(post_url);
 
-                list = !page.HasValue ?
+                var data = !page.HasValue ?
                     _commentRepository.GetComments(post_url) :
                     _commentRepository.GetComments(post_url, page.Value, limit);
 
+                list = data.Select(i => new CommentDto(i)).ToList();
                 return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
             }
             catch (System.Exception ex)
@@ -65,7 +69,9 @@ namespace Talking.Api.Controllers
                     ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 comment.Owner.IPv4 = ip;
                 _commentRepository.InsertComment(comment);
-                return Ok(HttpResponseFactory.CreateOk(message: "created", detail: comment));
+                return Ok(HttpResponseFactory.CreateOk(
+                    message: "created",
+                    detail: new CommentDto(comment)));
             }
             catch (Exception ex)
             {
