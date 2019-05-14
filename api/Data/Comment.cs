@@ -11,6 +11,7 @@ namespace Talking.Api.Data
 
         [BsonElement("owner")]
         public User Owner { get; set; }
+
         [BsonElement("post_title")]
         public string  PostTitle { get; set; }
 

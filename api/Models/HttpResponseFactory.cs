@@ -5,15 +5,11 @@ namespace Talking.Api.Models
         public static HttpResponse CreateOk(int code = 0,
                                             string message = "succeeded",
                                             object detail = null)
-        {
-            return new HttpResponse(code, $"ok:{message}", detail);
-        }
+        => new HttpResponse(code, $"ok:{message}", detail);
 
         public static HttpResponse CreateKo(int code,
                                             string message = "failed",
                                             object detail = null)
-        {
-            return new HttpResponse(code, $"ko:{message}", detail);
-        }
+        => new HttpResponse(code, $"ko:{message}", detail);
     }
 }
