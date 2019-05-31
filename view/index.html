@@ -60,7 +60,7 @@
           , email = inputOwnerEmail.value.trim()
           , htmlText = inputHtmlText.value.trim()
           , url = inputOwnerUrl.value.trim()
-          , postUrl = location.href
+          , postUrl = location.href.replace(/^https?:\/\//, '');
         if (!name) return alert("请输入昵称");
         if (!email) return alert("请输入邮箱");
         if (!htmlText) return alert("请输入评论内容");
