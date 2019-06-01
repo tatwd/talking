@@ -6,3 +6,4 @@ obj/
 build/
 output/
 *.tar.gz
+.idea/
