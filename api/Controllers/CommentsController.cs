@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Talking.Api.Data;
 using Talking.Api.Models;
 using Talking.Api.Repository;
@@ -14,11 +15,13 @@ namespace Talking.Api.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private ICommentRepository _commentRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly ILogger _logger;
 
-        public CommentsController(ICommentRepository commentRepository)
+        public CommentsController(ICommentRepository commentRepository, ILogger<CommentsController> logger)
         {
             _commentRepository = commentRepository;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -52,6 +55,7 @@ namespace Talking.Api.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError("{ex}", ex);
                 return BadRequest(HttpResponseFactory.CreateKo(
                     code: 5,
                     message: "exception",
@@ -68,6 +72,7 @@ namespace Talking.Api.Controllers
                 if (string.IsNullOrEmpty(ip))
                     ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 comment.Owner.IPv4 = ip;
+                _logger.LogInformation("Request Model: {0}", JsonConvert.SerializeObject(comment));
                 _commentRepository.InsertComment(comment);
                 return Ok(HttpResponseFactory.CreateOk(
                     message: "created",
@@ -75,6 +80,7 @@ namespace Talking.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("{ex}", ex);
                 return BadRequest(HttpResponseFactory.CreateKo(
                     code: 5,
                     message: "exception",
