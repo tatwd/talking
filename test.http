@@ -19,6 +19,7 @@ content-type: application/json
         "name": "Jaron",
         "email": "jaron@test.com"
     },
+    "postTitle": "Test Title",
     "postUrl": "http://foo.com/test",
-    "htmlText": "测试一下"
+    "htmlText": "<p>测试一下</p>"
 }
