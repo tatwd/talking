@@ -18,9 +18,8 @@
   function renderItem(item) {
     return `
       <div class="item" data-id=${item.id}>
-        <span>${item.owner.name}</span>
-        <a href="mailto:${item.owner.email}">${item.owner.email}</a>
-        <span>${new Date(item.utcCreated).toLocaleString()}</span>
+        <b>${item.owner.name}</b>
+        <i>${new Date(item.utcCreated).toLocaleString()}</i>
         <p>${item.htmlText}</p>
       </div>
     `;
