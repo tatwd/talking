@@ -7,3 +7,4 @@ build/
 output/
 *.tar.gz
 .idea/
+logs/
