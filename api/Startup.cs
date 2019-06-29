@@ -30,6 +30,7 @@ namespace Talking.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+#if DEBUG
             services.AddCors(options => {
                 options.AddPolicy(options.DefaultPolicyName,
                     builder => {
@@ -38,6 +39,7 @@ namespace Talking.Api
                         builder.AllowAnyHeader();
                     });
             });
+#endif
 
             services.Configure<MongoSettings>(options => {
                 options.ConnectionString = Configuration["MongoSettings:ConnectionUrl"];
@@ -47,8 +49,10 @@ namespace Talking.Api
             services.AddTransient<ICommentRepository, CommentRepository>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var logger = loggerFactory.CreateLogger(typeof(Startup));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -59,8 +63,20 @@ namespace Talking.Api
                 app.UseHsts();
             }
 
+            // 请求头信息日志
+            app.Use(dgate => {
+                dgate += (ctx) => {
+                    logger.LogInformation("{0} {1}",
+                        getClientIp(ctx),
+                        ctx.Request.Headers["User-Agent"]);
+                    return Task.CompletedTask;
+                };
+                return dgate;
+            });
+
             app.UseStatusCodePages(builder => {
                 builder.Run(async ctx => {
+                    // 处理 404 请求
                     if (ctx.Response.StatusCode == StatusCodes.Status404NotFound) {
                         ctx.Response.ContentType = "application/json; charset=utf-8";
                         await ctx.Response.WriteAsync("{\"error\": \"failed:not found your url\"}");
@@ -70,6 +86,14 @@ namespace Talking.Api
 
             // app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private string getClientIp(HttpContext ctx)
+        {
+            var ip = ctx.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrEmpty(ip))
+                ip = ctx.Connection.RemoteIpAddress.ToString();
+            return ip;
         }
     }
 }

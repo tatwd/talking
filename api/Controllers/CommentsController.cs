@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -55,7 +56,7 @@ namespace Talking.Api.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError("{ex}", ex);
+                _logger.LogError(ex, "因异常而获取评论失败");
                 return BadRequest(HttpResponseFactory.CreateKo(
                     code: 5,
                     message: "exception",
@@ -72,7 +73,7 @@ namespace Talking.Api.Controllers
                 if (string.IsNullOrEmpty(ip))
                     ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 comment.Owner.IPv4 = ip;
-                _logger.LogInformation("Request Model: {0}", JsonConvert.SerializeObject(comment));
+                _logger.LogInformation("Comment.Owner: {0}", JsonConvert.SerializeObject(comment.Owner));
                 _commentRepository.InsertComment(comment);
                 return Ok(HttpResponseFactory.CreateOk(
                     message: "created",
@@ -80,7 +81,7 @@ namespace Talking.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("{ex}", ex);
+                _logger.LogError(ex, "因异常而创建评论失败");
                 return BadRequest(HttpResponseFactory.CreateKo(
                     code: 5,
                     message: "exception",
