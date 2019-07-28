@@ -30,63 +30,41 @@ namespace Talking.Api.Controllers
                                  [FromQuery] int? page,
                                  [FromQuery] int limit = 10)
         {
-            try
+            IList<CommentDto> list;
+            long total = 0;
+
+            if (string.IsNullOrEmpty(post_url))
             {
-                IList<CommentDto> list;
-                long total = 0;
-
-                if (string.IsNullOrEmpty(post_url))
-                {
-                    list = _commentRepository
-                        .GetComments(limit: 10)
-                        .Select(i => new CommentDto(i))
-                        .ToList();
-                    total = list.Count;
-                    return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
-                }
-
-                total = _commentRepository.GetCount(post_url);
-
-                var data = !page.HasValue ?
-                    _commentRepository.GetComments(post_url) :
-                    _commentRepository.GetComments(post_url, page.Value, limit);
-
-                list = data.Select(i => new CommentDto(i)).ToList();
+                list = _commentRepository
+                    .GetComments(limit: 10)
+                    .Select(i => new CommentDto(i))
+                    .ToList();
+                total = list.Count;
                 return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
             }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "因异常而获取评论失败");
-                return BadRequest(HttpResponseFactory.CreateKo(
-                    code: 5,
-                    message: "exception",
-                    detail: ex.Message));
-            }
+
+            total = _commentRepository.GetCount(post_url);
+
+            var data = !page.HasValue ?
+                _commentRepository.GetComments(post_url) :
+                _commentRepository.GetComments(post_url, page.Value, limit);
+
+            list = data.Select(i => new CommentDto(i)).ToList();
+            return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] Comment comment)
         {
-            try
-            {
-                var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-                if (string.IsNullOrEmpty(ip))
-                    ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                comment.Owner.IPv4 = ip;
-                _logger.LogInformation("Comment.Owner: {0}", JsonConvert.SerializeObject(comment.Owner));
-                _commentRepository.InsertComment(comment);
-                return Ok(HttpResponseFactory.CreateOk(
-                    message: "created",
-                    detail: new CommentDto(comment)));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "因异常而创建评论失败");
-                return BadRequest(HttpResponseFactory.CreateKo(
-                    code: 5,
-                    message: "exception",
-                    detail: ex.Message));
-            }
+            var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrEmpty(ip))
+                ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            comment.Owner.IPv4 = ip;
+            _logger.LogInformation("Comment.Owner: {0}", JsonConvert.SerializeObject(comment.Owner));
+            _commentRepository.InsertComment(comment);
+            return Ok(HttpResponseFactory.CreateOk(
+                message: "created",
+                detail: new CommentDto(comment)));
         }
     }
 }

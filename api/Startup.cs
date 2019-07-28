@@ -11,9 +11,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Diagnostics;
 
 using Talking.Api.Data;
 using Talking.Api.Repository;
+using Talking.Api.Models;
+using Newtonsoft.Json;
 
 namespace Talking.Api
 {
@@ -83,6 +86,19 @@ namespace Talking.Api
                     }
                 });
             });
+
+            app.UseExceptionHandler(_ => _.Run(async ctx => {
+                var feature = ctx.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = feature.Error;
+                var detail = $"{exception.Message}:{exception.StackTrace}";
+                var ko = HttpResponseFactory.CreateKo(
+                    code: 5,
+                    message: "exception",
+                    detail);
+                logger.LogError(detail);
+                ctx.Response.ContentType = "application/json; charset=utf-8";
+                await ctx.Response.WriteAsync(JsonConvert.SerializeObject(ko));
+            }));
 
             // app.UseHttpsRedirection();
             app.UseMvc();
