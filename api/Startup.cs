@@ -95,7 +95,6 @@ namespace Talking.Api
                     code: 5,
                     message: "exception",
                     detail);
-                logger.LogError(detail);
                 ctx.Response.ContentType = "application/json; charset=utf-8";
                 await ctx.Response.WriteAsync(JsonConvert.SerializeObject(ko));
             }));
