@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Management</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="text-uppercase">Management</h1>
+  <div id="app">
+    <router-view>
+      Loading...
+    </router-view>
+  </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+<script>
+!(function(){
+
+var xhr = new XMLHttpRequest();
+window.httpClient = {
+  xhr,
+  get(config) {
+    var { url, ok, ko } = config;
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState === 4){
+        if(xhr.status >= 200 && xhr.status < 300) {
+           ok && (ok(xhr.response, xhr));
+        } else {
+           ko && (ko(xhr.response, xhr));
+        }
+      }
+    }
+    xhr.open('GET', url, true);
+    xhr.send(null);
+  },
+  post(config) {
+    //TODO
+  }
+}
+
+})()
+</script>
+
+<script>
+  const Foo = { template: '<div>Foo</div>' }
+  const Bar = { template: '<div>Bar</div>' }
+  const All = {
+    template: `
+      <div>
+        <div>
+          <div v-if="comments.length" class="alert alert-primary" role="alert">
+            <b>{{comments[0].owner.name}}</b> 对
+            <a :href="'//'+comments[0].postUrl" target="_blank">{{comments[0].postTitle}}</a>
+            发表了评论！
+          </div>
+        </div>
+        <p>
+          <router-link to="/foo">&rightarrow; Go to Foo</router-link><br>
+          <router-link to="/bar">&rightarrow; Go to Bar</router-link>
+        </p>
+        <ul class="list-group">
+          <li class="list-group-item" v-if="!comments.length">
+            None
+          </li>
+          <li v-else class="list-group-item" v-for="item in comments" :key="item.id">
+            <div>
+            评论者：{{item.owner.name}}<br>
+            文章标题：<a :href="'//'+item.postUrl" target="_blank">{{item.postTitle}}</a></br>
+            </div>
+            <span class="badge badge-primary badge-pill">{{item.utcCreated | fmtDate}}</span>
+          </li>
+        </ul>
+      </div>
+    `,
+    data(){
+      return {
+        comments: [],
+        total: 0
+      }
+    },
+    filters: {
+      fmtDate(val) {
+        return new Date(val).toLocaleString()
+      }
+    },
+    created(){
+      httpClient.get({
+        url: 'http://localhost:5000/api/comments',
+        ok: (res) => {
+          res = JSON.parse(res);
+          if (res.code === 0) {
+            this.comments = res.detail.list
+            this.total = res.detail.total
+          }
+        }
+      })
+    }
+  }
+
+  const routes = [
+    { path: '/foo', component: Foo },
+    { path: '/bar', component: Bar },
+    { path: '*', component: All }
+  ]
+
+  const router = new VueRouter({
+    mode: 'hash',
+    routes
+  })
+</script>
+
+<script>
+  const app = new Vue({
+    router,
+    mounted() {
+    }
+  }).$mount('#app')
+</script>
+</html>
