@@ -16,7 +16,8 @@ namespace Talking.Api.Models
         {
             ID = comment.ID.ToString();
             Owner = new {
-                Name = comment.Owner.Name
+                Name = comment.Owner.Name,
+                Url = comment.Owner.Url
             };
             PostTitle = comment.PostTitle;
             PostUrl = comment.PostUrl;
