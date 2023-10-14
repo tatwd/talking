@@ -5,18 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Diagnostics;
-
-using Talking.Api.Data;
-using Talking.Api.Repository;
 using Talking.Api.Models;
-using Newtonsoft.Json;
+using Talking.Domain.Data;
+using Talking.Domain.Repository;
 
 namespace Talking.Api
 {
@@ -32,6 +28,11 @@ namespace Talking.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.Configure<MvcOptions>(opt =>
+            {
+                opt.EnableEndpointRouting = false;
+            });
 
 #if DEBUG
             services.AddCors(options => {
@@ -70,7 +71,7 @@ namespace Talking.Api
             app.Use(dgate => {
                 dgate += (ctx) => {
                     logger.LogInformation("{0} {1}",
-                        getClientIp(ctx),
+                        GetClientIp(ctx),
                         ctx.Request.Headers["User-Agent"]);
                     return Task.CompletedTask;
                 };
@@ -96,14 +97,16 @@ namespace Talking.Api
                     message: "exception",
                     detail);
                 ctx.Response.ContentType = "application/json; charset=utf-8";
-                await ctx.Response.WriteAsync(JsonConvert.SerializeObject(ko));
+                await ctx.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(ko));
             }));
 
             // app.UseHttpsRedirection();
             app.UseMvc();
+
+            // app.UseRouting();
         }
 
-        private string getClientIp(HttpContext ctx)
+        private string GetClientIp(HttpContext ctx)
         {
             var ip = ctx.Request.Headers["X-Forwarded-For"].FirstOrDefault();
             if (string.IsNullOrEmpty(ip))

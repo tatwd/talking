@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Talking.Api.Data;
 using Talking.Api.Models;
-using Talking.Api.Repository;
+using Talking.Domain.Data;
+using Talking.Domain.Repository;
 
 namespace Talking.Api.Controllers
 {
@@ -26,14 +23,14 @@ namespace Talking.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string post_url,
+        public IActionResult Get([FromQuery(Name = "post_url")] string postUrl,
                                  [FromQuery] int? page,
                                  [FromQuery] int limit = 10)
         {
             IList<CommentDto> list;
             long total = 0;
 
-            if (string.IsNullOrEmpty(post_url))
+            if (string.IsNullOrEmpty(postUrl))
             {
                 list = _commentRepository
                     .GetComments(limit: 10)
@@ -43,11 +40,11 @@ namespace Talking.Api.Controllers
                 return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
             }
 
-            total = _commentRepository.GetCount(post_url);
+            total = _commentRepository.GetCount(postUrl);
 
             var data = !page.HasValue ?
-                _commentRepository.GetComments(post_url) :
-                _commentRepository.GetComments(post_url, page.Value, limit);
+                _commentRepository.GetComments(postUrl) :
+                _commentRepository.GetComments(postUrl, page.Value, limit);
 
             list = data.Select(i => new CommentDto(i)).ToList();
             return Ok(HttpResponseFactory.CreateOk(detail: new { total, list }));
@@ -60,7 +57,7 @@ namespace Talking.Api.Controllers
             if (string.IsNullOrEmpty(ip))
                 ip = HttpContext.Connection.RemoteIpAddress.ToString();
             comment.Owner.IPv4 = ip;
-            _logger.LogInformation("Comment.Owner: {0}", JsonConvert.SerializeObject(comment.Owner));
+            _logger.LogInformation("Comment.Owner: {@Owner}", comment.Owner);
             _commentRepository.InsertComment(comment);
             return Ok(HttpResponseFactory.CreateOk(
                 message: "created",

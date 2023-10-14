@@ -1,5 +1,5 @@
 using System;
-using Talking.Api.Data;
+using Talking.Domain.Data;
 
 namespace Talking.Api.Models
 {
