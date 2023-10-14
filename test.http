@@ -1,18 +1,18 @@
 ### Must install `REST Client` plugin in vscode
-@base_url = http://localhost:5000
+@base_url = https://localhost:5001
 
 ### Get comments
-GET {{{{base_url}}}}/api/comments HTTP/1.1
+GET {{base_url}}/api/comments HTTP/1.1
 
 ### Get comments by post_url
-GET {{{{base_url}}}}/api/comments?post_url=http://foo.com/abc HTTP/1.1
+GET {{base_url}}/api/comments?post_url=http://foo.com/abc HTTP/1.1
 
 
 ### Get comments by post_url, page, limit
-GET {{{{base_url}}}}/api/comments?post_url=http://foo.com/abc&page=1&limit=10 HTTP/1.1
+GET {{base_url}}/api/comments?post_url=http://foo.com/abc&page=1&limit=10 HTTP/1.1
 
 ### Create a comment
-POST {{{{base_url}}}}/api/comments HTTP/1.1
+POST {{base_url}}/api/comments HTTP/1.1
 content-type: application/json
 
 {
