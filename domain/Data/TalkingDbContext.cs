@@ -1,32 +1,27 @@
+using System;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Talking.Domain.Data;
-
-public class TalkingDbContext
+namespace Talking.Domain.Data
 {
-    private readonly IMongoDatabase _context ;
-
-    public TalkingDbContext(IOptions<MongoSettings> options)
+    public class TalkingDbContext
     {
-        try
+        private readonly IMongoDatabase _context ;
+
+        public TalkingDbContext(IOptions<MongoSettings> options)
         {
             var client = new MongoClient(options.Value.ConnectionString);
             _context = client.GetDatabase(options.Value.DatabaseName);
         }
-        catch (Exception ex)
+
+        public IMongoCollection<Comment> Comments
         {
-            throw ex;
+            get { return _context.GetCollection<Comment>("comments"); }
         }
-    }
 
-    public IMongoCollection<Comment> Comments
-    {
-        get { return _context.GetCollection<Comment>("comments"); }
-    }
-
-    public IMongoCollection<User> Users
-    {
-        get { return _context.GetCollection<User>("users"); }
+        public IMongoCollection<User> Users
+        {
+            get { return _context.GetCollection<User>("users"); }
+        }
     }
 }

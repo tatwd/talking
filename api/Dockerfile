@@ -1,13 +1,14 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+# FROM microsoft/dotnet:3.1-aspnetcore-runtime AS base
+FROM mcr.microsoft.com/dotnet/aspnet:3.1-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM microsoft/dotnet:2.1-sdk AS build
+# FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/sdk:3.1-alpine AS build
 WORKDIR /src
-COPY ["api/Talking.Api.csproj", "api/"]
-RUN dotnet restore "api/Talking.Api.csproj"
 COPY . .
+RUN dotnet restore "api/Talking.Api.csproj"
 WORKDIR "/src/api"
 RUN dotnet build "Talking.Api.csproj" -c Release -o /app
 

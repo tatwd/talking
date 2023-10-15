@@ -1,7 +1,8 @@
-namespace Talking.Domain.Data;
-
-public class MongoSettings
+namespace Talking.Domain.Data
 {
-    public string ConnectionString { get; set; }
-    public string DatabaseName { get; set; }
+    public class MongoSettings
+    {
+        public string ConnectionString { get; set; }
+        public string DatabaseName { get; set; }
+    }
 }
