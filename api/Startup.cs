@@ -52,8 +52,6 @@ namespace Talking.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            var logger = loggerFactory.CreateLogger(typeof(Startup));
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -64,10 +62,13 @@ namespace Talking.Api
                 app.UseHsts();
             }
 
-            app.UseExceptionHandler(_ => _.Run(async ctx => {
+            app.UseExceptionHandler(_ => _.Run(async ctx =>
+            {
+                var logger = loggerFactory.CreateLogger(typeof(Startup));
                 var feature = ctx.Features.Get<IExceptionHandlerPathFeature>();
                 var exception = feature.Error;
-                var detail = $"{exception.Message}:{exception.StackTrace}";
+                logger.LogError(exception, "未处理异常");
+                var detail = env.IsDevelopment() ? exception.ToString() : exception.Message;
                 var ko = HttpResponseFactory.CreateKo(
                     code: 5,
                     message: "exception",
