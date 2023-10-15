@@ -57,10 +57,6 @@ namespace Talking.Api
                 app.UseDeveloperExceptionPage();
                 app.UseCors();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             app.UseExceptionHandler(_ => _.Run(async ctx =>
             {

@@ -22,14 +22,8 @@ namespace Talking.Domain.Data
             _context = client.GetDatabase(dbName);
         }
 
-        public IMongoCollection<Comment> Comments
-        {
-            get { return _context.GetCollection<Comment>("comments"); }
-        }
+        public IMongoCollection<Comment> Comments => _context.GetCollection<Comment>("comments");
 
-        public IMongoCollection<User> Users
-        {
-            get { return _context.GetCollection<User>("users"); }
-        }
+        public IMongoCollection<User> Users => _context.GetCollection<User>("users");
     }
 }
