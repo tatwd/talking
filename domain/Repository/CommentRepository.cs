@@ -7,11 +7,11 @@ namespace Talking.Domain.Repository
 {
     public class CommentRepository : ICommentRepository
     {
-        private readonly TalkingDbContext _context = null;
+        private readonly TalkingDbContext _context;
 
-        public CommentRepository(IOptions<MongoSettings> settings)
+        public CommentRepository(TalkingDbContext context)
         {
-            _context = new TalkingDbContext(settings);
+            _context = context;
         }
 
         public long GetCount(string postUrl)

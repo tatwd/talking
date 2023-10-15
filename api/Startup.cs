@@ -57,7 +57,8 @@ namespace Talking.Api
                 options.DatabaseName = dbName;
             });
 
-            services.AddTransient<ICommentRepository, CommentRepository>();
+            services.AddSingleton<TalkingDbContext>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
