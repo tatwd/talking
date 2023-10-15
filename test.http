@@ -1,5 +1,8 @@
 ### Must install `REST Client` plugin in vscode
-@base_url = https://localhost:5001
+@base_url = http://localhost:8000
+
+### OPTIONS comments
+OPTIONS  {{base_url}}/api/comments HTTP/1.1
 
 ### Get comments
 GET {{base_url}}/api/comments HTTP/1.1
