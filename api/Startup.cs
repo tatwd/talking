@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Talking.Api.Models;
 using Talking.Domain.Data;
 using Talking.Domain.Repository;
+using Microsoft.Extensions.Hosting;
 
 namespace Talking.Api
 {
@@ -27,7 +28,7 @@ namespace Talking.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.Configure<MvcOptions>(opt =>
             {
@@ -53,7 +54,7 @@ namespace Talking.Api
             services.AddTransient<ICommentRepository, CommentRepository>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger(typeof(Startup));
 
