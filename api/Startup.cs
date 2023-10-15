@@ -46,17 +46,6 @@ namespace Talking.Api
             });
 #endif
 
-            services.Configure<MongoSettings>(options =>
-            {
-                var mongoConnStr = Environment.GetEnvironmentVariable("MONGO_URL") ??
-                                   Configuration["MongoSettings:ConnectionUrl"];
-                var dbName = Environment.GetEnvironmentVariable("MONGO_DB") ??
-                             Configuration["MongoSettings:DatabaseName"];
-
-                options.ConnectionString = mongoConnStr;
-                options.DatabaseName = dbName;
-            });
-
             services.AddSingleton<TalkingDbContext>();
             services.AddScoped<ICommentRepository, CommentRepository>();
         }
