@@ -1,7 +1,7 @@
 name: Deploy
 on:
   push:
-    paths: ['api-deno/**']
+    paths: ['api-deno/**', '.github/workflows/**']
 
 jobs:
   deploy:
@@ -25,5 +25,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "hard-moth-94"
-          entrypoint: "./api-deno/main.ts"
+          entrypoint: "main.ts"
           root: "./api-deno"
