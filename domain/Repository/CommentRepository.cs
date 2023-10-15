@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Talking.Domain.Data;
 
