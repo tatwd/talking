@@ -56,7 +56,7 @@ namespace Talking.Api.Controllers
             var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
             if (string.IsNullOrEmpty(ip))
                 ip = HttpContext.Connection.RemoteIpAddress.ToString();
-            comment.Owner.IPv4 = ip;
+            comment.Owner.IpV4 = ip;
             _logger.LogInformation("Comment.Owner: {@Owner}", comment.Owner);
             _commentRepository.InsertComment(comment);
             return Ok(HttpResponseFactory.CreateOk(

@@ -14,6 +14,6 @@ namespace Talking.Domain.Data
         public string Url { get; set; }
 
         [BsonElement("ip_v4")]
-        public string IPv4 { get; set; }
+        public string IpV4 { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace Talking.Api.Models
 
         public CommentDto(Comment comment)
         {
-            ID = comment.ID.ToString();
+            ID = comment.Id.ToString();
             Owner = new {
                 Name = comment.Owner.Name,
                 Url = comment.Owner.Url

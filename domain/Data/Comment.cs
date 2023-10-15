@@ -7,7 +7,7 @@ namespace Talking.Domain.Data
     public class Comment
     {
         [BsonId]
-        public ObjectId ID { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("owner")]
         public User Owner { get; set; }
