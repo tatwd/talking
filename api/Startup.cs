@@ -75,27 +75,6 @@ namespace Talking.Api
                 app.UseHsts();
             }
 
-            // 请求头信息日志
-            app.Use(dgate => {
-                dgate += (ctx) => {
-                    logger.LogInformation("{0} {1}",
-                        GetClientIp(ctx),
-                        ctx.Request.Headers["User-Agent"]);
-                    return Task.CompletedTask;
-                };
-                return dgate;
-            });
-
-            app.UseStatusCodePages(builder => {
-                builder.Run(async ctx => {
-                    // 处理 404 请求
-                    if (ctx.Response.StatusCode == StatusCodes.Status404NotFound) {
-                        ctx.Response.ContentType = "application/json; charset=utf-8";
-                        await ctx.Response.WriteAsync("{\"error\": \"failed:not found your url\"}");
-                    }
-                });
-            });
-
             app.UseExceptionHandler(_ => _.Run(async ctx => {
                 var feature = ctx.Features.Get<IExceptionHandlerPathFeature>();
                 var exception = feature.Error;
@@ -112,14 +91,6 @@ namespace Talking.Api
             app.UseMvc();
 
             // app.UseRouting();
-        }
-
-        private string GetClientIp(HttpContext ctx)
-        {
-            var ip = ctx.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            if (string.IsNullOrEmpty(ip))
-                ip = ctx.Connection.RemoteIpAddress.ToString();
-            return ip;
         }
     }
 }
