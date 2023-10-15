@@ -16,7 +16,7 @@ namespace Talking.Api
     {
         public static void Main(string[] args)
         {
-            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             try
             {
                 logger.Debug("初始化程序");
@@ -28,7 +28,7 @@ namespace Talking.Api
             }
             finally
             {
-                NLog.LogManager.Shutdown();
+                LogManager.Shutdown();
             }
         }
 
