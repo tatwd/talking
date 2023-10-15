@@ -24,6 +24,6 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "hard-moth-94"
+          project: "talking-api"
           entrypoint: "main.ts"
           root: "./api-deno"
