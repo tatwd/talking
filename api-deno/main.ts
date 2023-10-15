@@ -4,9 +4,9 @@ const router = new Router();
 
 router.get("/api/comments", (ctx) => {
   const { searchParams } = new URL(ctx.request.url);
-  const postUrl = searchParams.get('post_url');
-  const pageStr = searchParams.get('page');
-  const limit = searchParams.get('limit');
+  // const postUrl = searchParams.get('post_url');
+  // const pageStr = searchParams.get('page');
+  // const limit = searchParams.get('limit');
 
   // TODO: query from Kv
 
